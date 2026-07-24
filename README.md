@@ -2,6 +2,14 @@
 
 支持 PDF、ICO、JPG、PNG 四种格式之间的相互转换。提供命令行和可视化 Web 界面两种使用方式。
 
+## 一键部署（公网访问）
+
+点击下方按钮，将项目免费部署到 Render，自动获得公网域名：
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Simon404Error/imgconvert)
+
+部署后任何人通过 Render 分配的域名即可访问。
+
 ## 支持的转换
 
 | 源格式 | 目标格式      |
@@ -43,23 +51,13 @@ python -m imgconvert serve -H 0.0.0.0
 
 然后用本机 IP 地址访问，如 `http://192.168.1.100:5080`。
 
-**公网访问（任何人均可通过 URL 访问）：**
+**公网访问（ngrok 隧道）：**
 
 ```bash
 python -m imgconvert serve --ngrok
 ```
 
-启动后会自动生成一个公网 URL（如 `https://xxxx.ngrok-free.app`），将该 URL 分享给任何人即可访问。
-
-> 首次使用需安装并配置 ngrok：
-> 1. 注册 [ngrok](https://ngrok.com) 获取 authtoken
-> 2. 执行 `ngrok config add-authtoken <你的token>`
-
-自定义端口：
-
-```bash
-python -m imgconvert serve -H 0.0.0.0 -p 8080 --ngrok
-```
+启动后自动生成公网 URL，分享即可。使用前需注册 [ngrok](https://ngrok.com) 并配置 authtoken。
 
 ### 命令行
 

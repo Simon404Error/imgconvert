@@ -2,3 +2,4 @@ Pillow>=10.0.0
 PyMuPDF>=1.23.0
 Flask>=3.0.0
 pyngrok>=7.0.0
+gunicorn>=22.0.0
