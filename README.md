@@ -2,7 +2,6 @@
 
 支持 PDF、ICO、JPG、PNG 四种格式之间的相互转换。提供命令行和可视化 Web 界面两种使用方式。
 
-**线上地址: [https://simon404error.github.io/imgconvert/](https://simon404error.github.io/imgconvert/)** — 无需安装，浏览器打开即可使用。
 
 ## 一键部署（公网访问）
 
