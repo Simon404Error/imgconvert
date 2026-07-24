@@ -67,6 +67,20 @@ def main(argv: list[str] | None = None) -> None:
         help="JPEG quality (1-100, default: 95)",
     )
 
+    # Web server
+    serve = sub.add_parser("serve", help="Start the web UI server")
+    serve.add_argument(
+        "-H", "--host",
+        default="127.0.0.1",
+        help="Bind address (default: 127.0.0.1)",
+    )
+    serve.add_argument(
+        "-p", "--port",
+        type=int,
+        default=5080,
+        help="Listen port (default: 5080)",
+    )
+
     args = parser.parse_args(argv)
 
     try:
@@ -74,6 +88,8 @@ def main(argv: list[str] | None = None) -> None:
             _handle_single(args)
         elif args.command == "batch":
             _handle_batch(args)
+        elif args.command == "serve":
+            _handle_serve(args)
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
@@ -99,6 +115,12 @@ def _handle_batch(args: argparse.Namespace) -> None:
     for p in out:
         print(f"Converted: {p}")
     print(f"Done. {len(out)} file(s) converted.")
+
+
+def _handle_serve(args: argparse.Namespace) -> None:
+    from imgconvert.web import run_server
+    print(f"Starting web UI at http://{args.host}:{args.port}")
+    run_server(host=args.host, port=args.port)
 
 
 if __name__ == "__main__":

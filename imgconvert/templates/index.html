@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>图片格式转换</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: #f5f5f5;
+    color: #1a1a1a;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .header {
+    width: 100%;
+    background: #1a1a2e;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .header h1 {
+    color: #e0e0e0;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0;
+  }
+  .header .badge {
+    background: #3a3a5c;
+    color: #aab;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 3px;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 560px;
+    margin: 40px auto;
+    padding: 0 16px;
+  }
+
+  .upload-zone {
+    border: 2px dashed #c0c0d0;
+    border-radius: 6px;
+    padding: 48px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+    background: #fff;
+  }
+  .upload-zone:hover, .upload-zone.dragover {
+    border-color: #4a6cf7;
+    background: #f8f9ff;
+  }
+  .upload-zone .icon {
+    font-size: 36px;
+    margin-bottom: 12px;
+    color: #888;
+  }
+  .upload-zone p {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .upload-zone .hint {
+    color: #999;
+    font-size: 12px;
+    margin-top: 6px;
+  }
+  .upload-zone input { display: none; }
+
+  .file-info {
+    display: none;
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: #fff;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #555;
+    border: 1px solid #e5e5ef;
+  }
+  .file-info.visible { display: block; }
+  .file-info strong { color: #333; }
+
+  .section {
+    margin-top: 24px;
+    background: #fff;
+    border-radius: 6px;
+    padding: 20px;
+    border: 1px solid #e5e5ef;
+  }
+  .section-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #888;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+  }
+
+  .format-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  .format-btn {
+    padding: 10px 8px;
+    border: 1.5px solid #d8d8e8;
+    border-radius: 6px;
+    background: #fafafa;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: #555;
+    transition: all .15s;
+    text-align: center;
+  }
+  .format-btn:hover { border-color: #4a6cf7; color: #4a6cf7; }
+  .format-btn.active {
+    border-color: #4a6cf7;
+    background: #eef1ff;
+    color: #4a6cf7;
+    font-weight: 600;
+  }
+
+  .quality-row {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .quality-row.visible { display: flex; }
+  .quality-row label {
+    font-size: 13px;
+    color: #666;
+    white-space: nowrap;
+  }
+  .quality-row input[type=range] {
+    flex: 1;
+    accent-color: #4a6cf7;
+  }
+  .quality-row span {
+    font-size: 13px;
+    color: #333;
+    min-width: 32px;
+    text-align: right;
+  }
+
+  .btn-convert {
+    margin-top: 20px;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background: #4a6cf7;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .btn-convert:hover { background: #3b5de7; }
+  .btn-convert:disabled {
+    background: #c0c0d0;
+    cursor: not-allowed;
+  }
+
+  .result {
+    display: none;
+    margin-top: 20px;
+    padding: 16px;
+    border-radius: 6px;
+    font-size: 14px;
+  }
+  .result.success {
+    display: block;
+    background: #eaf6ee;
+    border: 1px solid #b8dfc6;
+    color: #2a7d46;
+  }
+  .result a {
+    color: #2a7d46;
+    font-weight: 600;
+  }
+  .result.error {
+    display: block;
+    background: #fdecea;
+    border: 1px solid #f5c6cb;
+    color: #b33a3a;
+  }
+
+  .spinner {
+    display: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #fff;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin .6s linear infinite;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .spinner.visible { display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>图片格式转换</h1>
+  <span class="badge">PDF &middot; ICO &middot; JPG &middot; PNG</span>
+</div>
+
+<div class="container">
+
+  <div class="upload-zone" id="uploadZone">
+    <div class="icon">&#128196;</div>
+    <p>拖拽文件到此处，或点击选择文件</p>
+    <p class="hint">支持 PDF、ICO、JPG、JPEG、PNG</p>
+    <input type="file" id="fileInput" accept=".pdf,.ico,.jpg,.jpeg,.png">
+  </div>
+
+  <div class="file-info" id="fileInfo">
+    已选择: <strong id="fileName"></strong>
+    &nbsp;<span id="fileSize"></span>
+  </div>
+
+  <div class="section">
+    <div class="section-label">目标格式</div>
+    <div class="format-grid" id="formatGrid">
+      <button class="format-btn active" data-fmt="png">PNG</button>
+      <button class="format-btn" data-fmt="jpg">JPG</button>
+      <button class="format-btn" data-fmt="ico">ICO</button>
+      <button class="format-btn" data-fmt="pdf">PDF</button>
+    </div>
+    <div class="quality-row" id="qualityRow">
+      <label>JPEG 质量</label>
+      <input type="range" id="quality" min="10" max="100" value="95" step="1">
+      <span id="qualityVal">95</span>
+    </div>
+  </div>
+
+  <button class="btn-convert" id="btnConvert" disabled>选择文件后开始转换</button>
+
+  <div class="result" id="result"></div>
+
+</div>
+
+<script>
+  const uploadZone = document.getElementById('uploadZone');
+  const fileInput = document.getElementById('fileInput');
+  const fileInfo = document.getElementById('fileInfo');
+  const fileName = document.getElementById('fileName');
+  const fileSize = document.getElementById('fileSize');
+  const formatGrid = document.getElementById('formatGrid');
+  const qualityRow = document.getElementById('qualityRow');
+  const quality = document.getElementById('quality');
+  const qualityVal = document.getElementById('qualityVal');
+  const btnConvert = document.getElementById('btnConvert');
+  const result = document.getElementById('result');
+
+  let selectedFile = null;
+  let selectedFmt = 'png';
+
+  uploadZone.addEventListener('click', () => fileInput.click());
+  uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
+  uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
+  uploadZone.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadZone.classList.remove('dragover');
+    if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+  });
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files.length) handleFile(fileInput.files[0]);
+  });
+
+  function handleFile(file) {
+    selectedFile = file;
+    fileName.textContent = file.name;
+    fileSize.textContent = formatBytes(file.size);
+    fileInfo.classList.add('visible');
+    btnConvert.disabled = false;
+    btnConvert.textContent = '开始转换';
+    result.className = 'result';
+    result.innerHTML = '';
+  }
+
+  function formatBytes(b) {
+    if (b < 1024) return `(${b} B)`;
+    if (b < 1048576) return `(${(b / 1024).toFixed(1)} KB)`;
+    return `(${(b / 1048576).toFixed(1)} MB)`;
+  }
+
+  formatGrid.addEventListener('click', e => {
+    if (!e.target.classList.contains('format-btn')) return;
+    formatGrid.querySelectorAll('.format-btn').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    selectedFmt = e.target.dataset.fmt;
+    qualityRow.classList.toggle('visible', selectedFmt === 'jpg');
+  });
+
+  quality.addEventListener('input', () => { qualityVal.textContent = quality.value; });
+
+  btnConvert.addEventListener('click', async () => {
+    if (!selectedFile) return;
+
+    btnConvert.disabled = true;
+    btnConvert.innerHTML = '<span class="spinner visible"></span>转换中...';
+    result.className = 'result';
+    result.innerHTML = '';
+
+    const fd = new FormData();
+    fd.append('file', selectedFile);
+    fd.append('format', selectedFmt);
+    fd.append('quality', quality.value);
+
+    try {
+      const resp = await fetch('/convert', { method: 'POST', body: fd });
+      if (!resp.ok) {
+        const err = await resp.json();
+        throw new Error(err.error || '转换失败');
+      }
+      const blob = await resp.blob();
+      const url = URL.createObjectURL(blob);
+      const ext = selectedFmt === 'jpg' ? '.jpg' : '.' + selectedFmt;
+      const dlName = selectedFile.name.replace(/\.[^.]+$/, '') + ext;
+      result.className = 'result success';
+      result.innerHTML = '转换完成 &mdash; <a href="' + url + '" download="' + dlName + '">下载文件</a>';
+    } catch (err) {
+      result.className = 'result error';
+      result.textContent = err.message;
+    } finally {
+      btnConvert.disabled = false;
+      btnConvert.textContent = '开始转换';
+    }
+  });
+</script>
+
+</body>
+</html>
