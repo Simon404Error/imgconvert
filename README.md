@@ -2,6 +2,13 @@
 
 支持 PDF、ICO、JPG、PNG 四种格式之间的相互转换。提供命令行和可视化 Web 界面两种使用方式。
 
+## 快速上手（无需安装）
+
+1. 前往 [Releases](https://github.com/Simon404Error/imgconvert/releases) 下载 `imgconvert-v1.0.0.zip`
+2. 解压后双击 `imgconvert.exe`
+3. 浏览器自动打开，上传文件即可转换
+
+> Windows 10/11 64 位，无需安装 Python 或任何依赖。
 
 ## 一键部署（公网访问）
 
@@ -26,7 +33,7 @@
 - ICO 输出：自动生成标准多尺寸（256、128、64、48、32、16 px）
 - 透明 PNG/ICO 转 JPG 时自动合成为白底
 
-## 安装
+## 从源码安装
 
 ```bash
 pip install -r requirements.txt
