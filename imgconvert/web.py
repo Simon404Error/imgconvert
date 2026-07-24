@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import io
 import os
+import sys
 import tempfile
 from pathlib import Path
 
@@ -85,6 +86,40 @@ def do_convert():
                     pass
 
 
-def run_server(host: str = "127.0.0.1", port: int = 5080, debug: bool = False) -> None:
-    """Start the Flask development server."""
+def _start_ngrok(port: int) -> str | None:
+    """Start an ngrok tunnel and return the public URL, or None on failure."""
+    try:
+        from pyngrok import ngrok
+    except ImportError:
+        print("pyngrok 未安装，请执行: pip install pyngrok", file=sys.stderr)
+        return None
+
+    try:
+        tunnel = ngrok.connect(port, "http")
+        return str(tunnel.public_url)
+    except Exception as e:
+        print(f"ngrok 隧道创建失败: {e}", file=sys.stderr)
+        print("请确认: 1) ngrok 已安装  2) 已配置 auth token (ngrok config add-authtoken <token>)",
+              file=sys.stderr)
+        return None
+
+
+def run_server(
+    host: str = "127.0.0.1",
+    port: int = 5080,
+    debug: bool = False,
+    ngrok: bool = False,
+) -> None:
+    """Start the Flask development server, optionally with ngrok public tunnel."""
+    public_url: str | None = None
+
+    if ngrok:
+        print("正在创建 ngrok 公网隧道...")
+        public_url = _start_ngrok(port)
+        if public_url:
+            print(f"公网地址: {public_url}")
+
+    if host in ("0.0.0.0", "::"):
+        print(f"局域网地址: http://<本机IP>:{port}")
+
     app.run(host=host, port=port, debug=debug)

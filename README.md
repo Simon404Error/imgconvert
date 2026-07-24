@@ -27,7 +27,7 @@ pip install -r requirements.txt
 
 ### Web 可视化界面
 
-启动本地 Web 服务，在浏览器中拖拽上传文件进行转换：
+**本地访问：**
 
 ```bash
 python -m imgconvert serve
@@ -35,10 +35,30 @@ python -m imgconvert serve
 
 浏览器访问 `http://127.0.0.1:5080`，上传文件、选择目标格式，一键转换并下载。
 
-自定义地址和端口：
+**局域网共享（同网络下其他设备可访问）：**
 
 ```bash
-python -m imgconvert serve -H 0.0.0.0 -p 8080
+python -m imgconvert serve -H 0.0.0.0
+```
+
+然后用本机 IP 地址访问，如 `http://192.168.1.100:5080`。
+
+**公网访问（任何人均可通过 URL 访问）：**
+
+```bash
+python -m imgconvert serve --ngrok
+```
+
+启动后会自动生成一个公网 URL（如 `https://xxxx.ngrok-free.app`），将该 URL 分享给任何人即可访问。
+
+> 首次使用需安装并配置 ngrok：
+> 1. 注册 [ngrok](https://ngrok.com) 获取 authtoken
+> 2. 执行 `ngrok config add-authtoken <你的token>`
+
+自定义端口：
+
+```bash
+python -m imgconvert serve -H 0.0.0.0 -p 8080 --ngrok
 ```
 
 ### 命令行

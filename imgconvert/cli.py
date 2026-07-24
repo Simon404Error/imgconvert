@@ -80,6 +80,11 @@ def main(argv: list[str] | None = None) -> None:
         default=5080,
         help="Listen port (default: 5080)",
     )
+    serve.add_argument(
+        "--ngrok",
+        action="store_true",
+        help="Create a public ngrok tunnel so anyone on the internet can access the web UI",
+    )
 
     args = parser.parse_args(argv)
 
@@ -119,9 +124,15 @@ def _handle_batch(args: argparse.Namespace) -> None:
 
 def _handle_serve(args: argparse.Namespace) -> None:
     from imgconvert.web import run_server
-    print(f"Starting web UI at http://{args.host}:{args.port}")
-    run_server(host=args.host, port=args.port)
 
-
-if __name__ == "__main__":
-    main()
+    if args.ngrok:
+        # ngrok tunnel always binds to 127.0.0.1
+        print(f"Starting web UI at http://127.0.0.1:{args.port}")
+        run_server(host="127.0.0.1", port=args.port, ngrok=True)
+    else:
+        if args.host == "127.0.0.1":
+            print(f"Starting web UI at http://{args.host}:{args.port}")
+            print("提示: 使用 -H 0.0.0.0 允许局域网访问，使用 --ngrok 创建公网隧道")
+        else:
+            print(f"Starting web UI at http://{args.host}:{args.port}")
+        run_server(host=args.host, port=args.port)
