@@ -15,4 +15,7 @@ Thumbs.db
 work/
 outputs/
 test_output/
+build/
+dist/
+*.spec
 _test_*
