@@ -42,14 +42,14 @@
   .container {
     width: 100%;
     max-width: 560px;
-    margin: 40px auto;
+    margin: 32px auto;
     padding: 0 16px;
   }
 
   .upload-zone {
     border: 2px dashed #c0c0d0;
     border-radius: 6px;
-    padding: 48px 24px;
+    padding: 44px 24px;
     text-align: center;
     cursor: pointer;
     transition: border-color .15s, background .15s;
@@ -60,26 +60,18 @@
     background: #f8f9ff;
   }
   .upload-zone .icon {
-    font-size: 36px;
-    margin-bottom: 12px;
+    font-size: 34px;
+    margin-bottom: 10px;
     color: #888;
   }
-  .upload-zone p {
-    color: #666;
-    font-size: 14px;
-    line-height: 1.6;
-  }
-  .upload-zone .hint {
-    color: #999;
-    font-size: 12px;
-    margin-top: 6px;
-  }
+  .upload-zone p { color: #666; font-size: 14px; line-height: 1.6; }
+  .upload-zone .hint { color: #999; font-size: 12px; margin-top: 4px; }
   .upload-zone input { display: none; }
 
   .file-info {
     display: none;
-    margin-top: 16px;
-    padding: 12px 16px;
+    margin-top: 14px;
+    padding: 10px 14px;
     background: #fff;
     border-radius: 6px;
     font-size: 13px;
@@ -89,15 +81,40 @@
   .file-info.visible { display: block; }
   .file-info strong { color: #333; }
 
-  .section {
-    margin-top: 24px;
+  .preview {
+    display: none;
+    margin-top: 14px;
     background: #fff;
     border-radius: 6px;
-    padding: 20px;
+    border: 1px solid #e5e5ef;
+    padding: 12px;
+    text-align: center;
+  }
+  .preview.visible { display: block; }
+  .preview canvas {
+    max-width: 100%;
+    max-height: 240px;
+    cursor: crosshair;
+    touch-action: none;
+    background-image:
+      linear-gradient(45deg, #eee 25%, transparent 25%),
+      linear-gradient(-45deg, #eee 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #eee 75%),
+      linear-gradient(-45deg, transparent 75%, #eee 75%);
+    background-size: 14px 14px;
+    background-position: 0 0, 0 7px, 7px -7px, -7px 0;
+  }
+  .preview .meta { font-size: 11px; color: #aaa; margin-top: 6px; }
+
+  .section {
+    margin-top: 18px;
+    background: #fff;
+    border-radius: 6px;
+    padding: 18px 20px;
     border: 1px solid #e5e5ef;
   }
   .section-label {
-    font-size: 12px;
+    font-size: 11px;
     text-transform: uppercase;
     color: #888;
     letter-spacing: 0.5px;
@@ -129,31 +146,60 @@
     font-weight: 600;
   }
 
-  .quality-row {
+  .quality-row, .slider-row {
     display: none;
     align-items: center;
-    gap: 12px;
-    margin-top: 16px;
+    gap: 10px;
+    margin-top: 14px;
   }
-  .quality-row.visible { display: flex; }
-  .quality-row label {
+  .quality-row.visible, .slider-row.visible { display: flex; }
+  .quality-row label, .slider-row label { font-size: 13px; color: #666; white-space: nowrap; }
+  .quality-row input[type=range], .slider-row input[type=range] { flex: 1; accent-color: #4a6cf7; }
+  .quality-row span, .slider-row span { font-size: 13px; color: #333; min-width: 42px; text-align: right; }
+
+  .processing-block { padding: 10px 0; border-top: 1px solid #eef0f5; }
+  .processing-block:first-child { border-top: none; padding-top: 0; }
+  .row-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .row-header label { font-size: 13px; font-weight: 600; color: #444; }
+  .mini-btn {
+    padding: 4px 10px;
+    border: 1px solid #d8d8e8;
+    border-radius: 4px;
+    background: #fafafa;
+    color: #777;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .mini-btn:hover { border-color: #4a6cf7; color: #4a6cf7; }
+
+  .crop-tip {
+    font-size: 12px;
+    color: #777;
+    background: #f7f8ff;
+    border: 1px solid #e3e7ff;
+    border-radius: 4px;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+  }
+  .dim-hint { font-size: 11px; color: #aaa; margin-top: 6px; }
+
+  .check-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-size: 13px;
-    color: #666;
-    white-space: nowrap;
+    color: #555;
+    cursor: pointer;
   }
-  .quality-row input[type=range] {
-    flex: 1;
-    accent-color: #4a6cf7;
-  }
-  .quality-row span {
-    font-size: 13px;
-    color: #333;
-    min-width: 32px;
-    text-align: right;
-  }
+  .check-row input { accent-color: #4a6cf7; width: 15px; height: 15px; }
 
   .btn-convert {
-    margin-top: 20px;
+    margin-top: 18px;
     width: 100%;
     padding: 12px;
     border: none;
@@ -166,15 +212,12 @@
     transition: background .15s;
   }
   .btn-convert:hover { background: #3b5de7; }
-  .btn-convert:disabled {
-    background: #c0c0d0;
-    cursor: not-allowed;
-  }
+  .btn-convert:disabled { background: #c0c0d0; cursor: not-allowed; }
 
   .result {
     display: none;
-    margin-top: 20px;
-    padding: 16px;
+    margin-top: 18px;
+    padding: 14px;
     border-radius: 6px;
     font-size: 14px;
   }
@@ -184,21 +227,18 @@
     border: 1px solid #b8dfc6;
     color: #2a7d46;
   }
-  .result a {
-    color: #2a7d46;
-    font-weight: 600;
-  }
   .result.error {
     display: block;
     background: #fdecea;
     border: 1px solid #f5c6cb;
     color: #b33a3a;
   }
+  .result a { color: #2a7d46; font-weight: 600; }
 
   .spinner {
     display: none;
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     border: 2px solid #fff;
     border-top-color: transparent;
     border-radius: 50%;
@@ -231,6 +271,11 @@
     &nbsp;<span id="fileSize"></span>
   </div>
 
+  <div class="preview" id="preview">
+    <canvas id="previewCanvas"></canvas>
+    <div class="meta" id="previewMeta"></div>
+  </div>
+
   <div class="section">
     <div class="section-label">目标格式</div>
     <div class="format-grid" id="formatGrid">
@@ -246,6 +291,41 @@
     </div>
   </div>
 
+  <div class="section">
+    <div class="section-label">图片处理</div>
+
+    <div class="processing-block">
+      <div class="row-header">
+        <label>裁剪</label>
+        <button class="mini-btn" id="btnResetCrop" type="button">重置</button>
+      </div>
+      <div class="crop-tip">在预览图上按住鼠标拖动，松开后完成裁剪</div>
+      <div class="dim-hint">图片尺寸: <span id="imgDims">未加载</span> &nbsp;|&nbsp; 当前裁剪: <span id="cropReadout">无</span></div>
+    </div>
+
+    <div class="processing-block">
+      <div class="row-header">
+        <label>图标圆角</label>
+        <span id="radiusVal">0 px</span>
+      </div>
+      <div class="slider-row visible">
+        <input type="range" id="radius" min="0" max="200" value="0" step="1">
+      </div>
+    </div>
+
+    <div class="processing-block">
+      <label class="check-row">
+        <input type="checkbox" id="cutoutCheck">
+        背景镂空（去除边缘背景）
+      </label>
+      <div class="slider-row" id="cutoutTolRow">
+        <label>容差</label>
+        <input type="range" id="cutoutTolerance" min="0" max="100" value="30" step="1">
+        <span id="cutoutTolVal">30</span>
+      </div>
+    </div>
+  </div>
+
   <button class="btn-convert" id="btnConvert" disabled>选择文件后开始转换</button>
 
   <div class="result" id="result"></div>
@@ -258,15 +338,32 @@
   const fileInfo = document.getElementById('fileInfo');
   const fileName = document.getElementById('fileName');
   const fileSize = document.getElementById('fileSize');
+  const preview = document.getElementById('preview');
+  const previewCanvas = document.getElementById('previewCanvas');
+  const previewMeta = document.getElementById('previewMeta');
+  const imgDims = document.getElementById('imgDims');
+  const cropReadout = document.getElementById('cropReadout');
   const formatGrid = document.getElementById('formatGrid');
   const qualityRow = document.getElementById('qualityRow');
   const quality = document.getElementById('quality');
   const qualityVal = document.getElementById('qualityVal');
+  const btnResetCrop = document.getElementById('btnResetCrop');
+  const radius = document.getElementById('radius');
+  const radiusVal = document.getElementById('radiusVal');
+  const cutoutCheck = document.getElementById('cutoutCheck');
+  const cutoutTolRow = document.getElementById('cutoutTolRow');
+  const cutoutTolerance = document.getElementById('cutoutTolerance');
+  const cutoutTolVal = document.getElementById('cutoutTolVal');
   const btnConvert = document.getElementById('btnConvert');
   const result = document.getElementById('result');
 
   let selectedFile = null;
   let selectedFmt = 'png';
+  let sourceImage = null;
+  let imgWidth = 0;
+  let imgHeight = 0;
+  let cropBox = null; // [left, top, right, bottom] in source pixels, null = full
+  let dragState = { active: false, x0: 0, y0: 0, x1: 0, y1: 0 };
 
   uploadZone.addEventListener('click', () => fileInput.click());
   uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
@@ -280,15 +377,278 @@
     if (fileInput.files.length) handleFile(fileInput.files[0]);
   });
 
+  previewCanvas.addEventListener('mousedown', startCropDrag);
+  previewCanvas.addEventListener('touchstart', e => {
+    if (e.touches.length) startCropDragFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: false });
+
   function handleFile(file) {
     selectedFile = file;
     fileName.textContent = file.name;
     fileSize.textContent = formatBytes(file.size);
     fileInfo.classList.add('visible');
-    btnConvert.disabled = false;
-    btnConvert.textContent = '开始转换';
     result.className = 'result';
     result.innerHTML = '';
+    btnConvert.disabled = false;
+    btnConvert.textContent = '开始转换';
+    cropBox = null;
+    cropReadout.textContent = '无';
+
+    const ext = '.' + file.name.split('.').pop().toLowerCase();
+    if (ext === '.pdf') {
+      preview.classList.remove('visible');
+      sourceImage = null;
+      imgWidth = 0;
+      imgHeight = 0;
+      imgDims.textContent = 'PDF（裁剪坐标需自行确认）';
+      return;
+    }
+
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      sourceImage = img;
+      imgWidth = img.naturalWidth;
+      imgHeight = img.naturalHeight;
+      imgDims.textContent = imgWidth + ' x ' + imgHeight + ' px';
+      renderPreview();
+    };
+    img.src = url;
+    preview.classList.add('visible');
+  }
+
+  function resetCrop() {
+    cropBox = null;
+    cropReadout.textContent = '无';
+    renderPreview();
+  }
+  btnResetCrop.addEventListener('click', resetCrop);
+
+  function startCropDrag(e) {
+    e.preventDefault();
+    startCropDragFromPoint(e.clientX, e.clientY);
+  }
+
+  function startCropDragFromPoint(clientX, clientY) {
+    if (!sourceImage) return;
+    const p = eventToSource(clientX, clientY);
+    dragState = { active: true, x0: p.x, y0: p.y, x1: p.x, y1: p.y };
+    window.addEventListener('mousemove', moveCropDrag);
+    window.addEventListener('mouseup', endCropDrag);
+    window.addEventListener('touchmove', moveTouchDrag, { passive: false });
+    window.addEventListener('touchend', endCropDrag);
+    renderPreview();
+  }
+
+  function moveCropDrag(e) {
+    const p = eventToSource(e.clientX, e.clientY);
+    dragState.x1 = Math.max(0, Math.min(p.x, imgWidth));
+    dragState.y1 = Math.max(0, Math.min(p.y, imgHeight));
+    renderPreview();
+  }
+
+  function moveTouchDrag(e) {
+    e.preventDefault();
+    if (e.touches.length) {
+      const t = e.touches[0];
+      const p = eventToSource(t.clientX, t.clientY);
+      dragState.x1 = Math.max(0, Math.min(p.x, imgWidth));
+      dragState.y1 = Math.max(0, Math.min(p.y, imgHeight));
+      renderPreview();
+    }
+  }
+
+  function endCropDrag() {
+    window.removeEventListener('mousemove', moveCropDrag);
+    window.removeEventListener('mouseup', endCropDrag);
+    window.removeEventListener('touchmove', moveTouchDrag);
+    window.removeEventListener('touchend', endCropDrag);
+
+    const l = Math.min(dragState.x0, dragState.x1);
+    const r = Math.max(dragState.x0, dragState.x1);
+    const t = Math.min(dragState.y0, dragState.y1);
+    const b = Math.max(dragState.y0, dragState.y1);
+    dragState.active = false;
+
+    if (r - l > 3 && b - t > 3) {
+      cropBox = [l, t, r, b];
+      cropReadout.textContent = cropBox.join(', ');
+    } else {
+      resetCrop();
+    }
+    renderPreview();
+  }
+
+  function eventToSource(clientX, clientY) {
+    const rect = previewCanvas.getBoundingClientRect();
+    const cx = (clientX - rect.left) / rect.width * previewCanvas.width;
+    const cy = (clientY - rect.top) / rect.height * previewCanvas.height;
+    return {
+      x: Math.round(cx * imgWidth / previewCanvas.width),
+      y: Math.round(cy * imgHeight / previewCanvas.height),
+    };
+  }
+
+  function renderPreview() {
+    if (!sourceImage) return;
+
+    const w = cropBox ? cropBox[2] - cropBox[0] : imgWidth;
+    const h = cropBox ? cropBox[3] - cropBox[1] : imgHeight;
+    if (!w || !h) return;
+
+    const work = document.createElement('canvas');
+    work.width = w;
+    work.height = h;
+    const ctx = work.getContext('2d');
+    if (cropBox) {
+      ctx.drawImage(sourceImage, cropBox[0], cropBox[1], w, h, 0, 0, w, h);
+    } else {
+      ctx.drawImage(sourceImage, 0, 0);
+    }
+
+    const r = Number(radius.value || 0);
+    if (r > 0) {
+      const trimmed = trimBackground(ctx, w, h);
+      if (trimmed) { w = trimmed[0]; h = trimmed[1]; }
+      ctx.globalCompositeOperation = 'destination-in';
+      ctx.beginPath();
+      if (ctx.roundRect) {
+        ctx.roundRect(0, 0, w, h, Math.min(r, w / 2, h / 2));
+      } else {
+        const rr = Math.min(r, w / 2, h / 2);
+        ctx.moveTo(0, rr);
+        ctx.arcTo(0, 0, rr, 0, rr);
+        ctx.lineTo(w - rr, 0);
+        ctx.arcTo(w, 0, w, rr, rr);
+        ctx.lineTo(w, h - rr);
+        ctx.arcTo(w, h, w - rr, h, rr);
+        ctx.lineTo(rr, h);
+        ctx.arcTo(0, h, 0, h - rr, rr);
+        ctx.closePath();
+      }
+      ctx.fill();
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    if (cutoutCheck.checked) {
+      applyCutout(ctx, w, h, Number(cutoutTolerance.value || 0));
+    }
+
+    const maxW = 420, maxH = 240;
+    const scale = Math.min(maxW / w, maxH / h, 1);
+    previewCanvas.width = Math.max(1, Math.round(w * scale));
+    previewCanvas.height = Math.max(1, Math.round(h * scale));
+    const pctx = previewCanvas.getContext('2d');
+    pctx.drawImage(work, 0, 0, previewCanvas.width, previewCanvas.height);
+
+    if (dragState.active) {
+      drawCropOverlay(pctx, dragState.x0, dragState.y0, dragState.x1, dragState.y1);
+    }
+    previewMeta.textContent = `预览 ${w} x ${h} px${cropBox ? ' · 裁剪区域 ' + cropBox.join(', ') : ''}`;
+  }
+
+  function drawCropOverlay(ctx, x0, y0, x1, y1) {
+    const W = previewCanvas.width;
+    const H = previewCanvas.height;
+    const sx0 = Math.min(x0, x1) / imgWidth * W;
+    const sx1 = Math.max(x0, x1) / imgWidth * W;
+    const sy0 = Math.min(y0, y1) / imgHeight * H;
+    const sy1 = Math.max(y0, y1) / imgHeight * H;
+
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+    ctx.fillRect(0, 0, W, sy0);
+    ctx.fillRect(0, sy1, W, H - sy1);
+    ctx.fillRect(0, sy0, sx0, sy1 - sy0);
+    ctx.fillRect(sx1, sy0, W - sx1, sy1 - sy0);
+    ctx.strokeStyle = '#4a6cf7';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 4]);
+    ctx.strokeRect(sx0, sy0, sx1 - sx0, sy1 - sy0);
+    ctx.setLineDash([]);
+  }
+
+  function trimBackground(ctx, w, h) {
+    const imageData = ctx.getImageData(0, 0, w, h);
+    const data = imageData.data;
+    const corners = [
+      [data[0], data[1], data[2]],
+      [data[(w - 1) * 4], data[(w - 1) * 4 + 1], data[(w - 1) * 4 + 2]],
+      [data[(h - 1) * w * 4], data[(h - 1) * w * 4 + 1], data[(h - 1) * w * 4 + 2]],
+      [data[((h - 1) * w + w - 1) * 4], data[((h - 1) * w + w - 1) * 4 + 1], data[((h - 1) * w + w - 1) * 4 + 2]],
+    ];
+    const bg = [0, 1, 2].map(i => Math.round((corners[0][i] + corners[1][i] + corners[2][i] + corners[3][i]) / 4));
+    const bgAlpha = Math.round((data[3] + data[(w - 1) * 4 + 3] + data[(h - 1) * w * 4 + 3] + data[((h - 1) * w + w - 1) * 4 + 3]) / 4);
+    const tolerance = 24;
+    let minX = w, minY = h, maxX = -1, maxY = -1;
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        const i = (y * w + x) * 4;
+        const nearBg = Math.abs(data[i] - bg[0]) + Math.abs(data[i + 1] - bg[1]) + Math.abs(data[i + 2] - bg[2]) <= tolerance * 3;
+        if (data[i + 3] > 8 && (bgAlpha < 8 || !nearBg)) {
+          if (x < minX) minX = x;
+          if (x > maxX) maxX = x;
+          if (y < minY) minY = y;
+          if (y > maxY) maxY = y;
+        }
+      }
+    }
+    if (maxX < minX) return null;
+    const cw = maxX - minX + 1;
+    const ch = maxY - minY + 1;
+    if (cw === w && ch === h) return null;
+    const temp = document.createElement('canvas');
+    temp.width = cw;
+    temp.height = ch;
+    temp.getContext('2d').drawImage(ctx.canvas, minX, minY, cw, ch, 0, 0, cw, ch);
+    ctx.canvas.width = cw;
+    ctx.canvas.height = ch;
+    ctx.drawImage(temp, 0, 0);
+    return [cw, ch];
+  }
+
+  function applyCutout(ctx, w, h, tolerance) {
+    const imageData = ctx.getImageData(0, 0, w, h);
+    const data = imageData.data;
+    const visited = new Uint8Array(w * h);
+    const queue = [];
+
+    function px(x, y) { return y * w + x; }
+    function near(i) {
+      return Math.abs(data[i] - bg[0]) + Math.abs(data[i + 1] - bg[1]) + Math.abs(data[i + 2] - bg[2]) <= tolerance * 3;
+    }
+    function seed(x, y) {
+      const i = px(x, y);
+      if (!visited[i] && near(i * 4)) {
+        visited[i] = 1;
+        queue.push(i);
+      }
+    }
+
+    const corners = [
+      [data[0], data[1], data[2]],
+      [data[(w - 1) * 4], data[(w - 1) * 4 + 1], data[(w - 1) * 4 + 2]],
+      [data[(h - 1) * w * 4], data[(h - 1) * w * 4 + 1], data[(h - 1) * w * 4 + 2]],
+      [data[((h - 1) * w + w - 1) * 4], data[((h - 1) * w + w - 1) * 4 + 1], data[((h - 1) * w + w - 1) * 4 + 2]],
+    ];
+    const bg = [0, 1, 2].map(i => Math.round((corners[0][i] + corners[1][i] + corners[2][i] + corners[3][i]) / 4));
+
+    for (let x = 0; x < w; x++) { seed(x, 0); seed(x, h - 1); }
+    for (let y = 0; y < h; y++) { seed(0, y); seed(w - 1, y); }
+
+    while (queue.length) {
+      const i = queue.pop();
+      const x = i % w;
+      const y = (i - x) / w;
+      if (x > 0) { const n = i - 1; if (!visited[n] && near(n * 4)) { visited[n] = 1; queue.push(n); } }
+      if (x < w - 1) { const n = i + 1; if (!visited[n] && near(n * 4)) { visited[n] = 1; queue.push(n); } }
+      if (y > 0) { const n = i - w; if (!visited[n] && near(n * 4)) { visited[n] = 1; queue.push(n); } }
+      if (y < h - 1) { const n = i + w; if (!visited[n] && near(n * 4)) { visited[n] = 1; queue.push(n); } }
+    }
+
+    for (let i = 0; i < visited.length; i++) {
+      if (visited[i]) data[i * 4 + 3] = 0;
+    }
+    ctx.putImageData(imageData, 0, 0);
   }
 
   function formatBytes(b) {
@@ -306,6 +666,12 @@
   });
 
   quality.addEventListener('input', () => { qualityVal.textContent = quality.value; });
+  radius.addEventListener('input', () => { radiusVal.textContent = radius.value + ' px'; renderPreview(); });
+  cutoutTolerance.addEventListener('input', () => { cutoutTolVal.textContent = cutoutTolerance.value; renderPreview(); });
+  cutoutCheck.addEventListener('change', () => {
+    cutoutTolRow.classList.toggle('visible', cutoutCheck.checked);
+    renderPreview();
+  });
 
   btnConvert.addEventListener('click', async () => {
     if (!selectedFile) return;
@@ -320,6 +686,14 @@
     fd.append('format', selectedFmt);
     fd.append('quality', quality.value);
 
+    if (cropBox) {
+      const isFull = cropBox[0] === 0 && cropBox[1] === 0 && cropBox[2] === imgWidth && cropBox[3] === imgHeight;
+      if (!isFull) fd.append('crop', cropBox.join(','));
+    }
+    fd.append('radius', radius.value);
+    fd.append('cutout', cutoutCheck.checked ? '1' : '0');
+    fd.append('cutout_tolerance', cutoutTolerance.value);
+
     try {
       const resp = await fetch('/convert', { method: 'POST', body: fd });
       if (!resp.ok) {
@@ -332,6 +706,7 @@
       const dlName = selectedFile.name.replace(/\.[^.]+$/, '') + ext;
       result.className = 'result success';
       result.innerHTML = '转换完成 &mdash; <a href="' + url + '" download="' + dlName + '">下载文件</a>';
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     } catch (err) {
       result.className = 'result error';
       result.textContent = err.message;

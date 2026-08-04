@@ -1,14 +1,24 @@
 # imgconvert - 图片格式转换工具
 
-支持 PDF、ICO、JPG、PNG 四种格式之间的相互转换。提供命令行和可视化 Web 界面两种使用方式。
+支持 PDF、ICO、JPG、PNG 四种格式之间的相互转换，并提供裁剪、图标圆角、背景镂空等图片处理功能。支持命令行和可视化 Web 界面两种使用方式。
 
 ## 快速上手（无需安装）
 
-1. 前往 [Releases](https://github.com/Simon404Error/imgconvert/releases) 下载 `imgconvert-v1.0.0.zip`
+1. 前往 [Releases](https://github.com/Simon404Error/imgconvert/releases) 下载最新的 `imgconvert-v1.0.1.zip`
 2. 解压后双击 `imgconvert.exe`
 3. 浏览器自动打开，上传文件即可转换
 
 > Windows 10/11 64 位，无需安装 Python 或任何依赖。
+> 旧版 `v1.0.0` 同样保留在 Releases 中。
+
+## 功能特性
+
+- **格式互转**：PDF、ICO、JPG、PNG 全双向转换
+- **拖动裁剪**：在预览图上按住鼠标拖动即可选择裁剪区域
+- **图标圆角**：自动去除白边后生成手机 App 风格圆角，导出 ICO 时每个尺寸都会重新应用圆角
+- **背景镂空**：一键去除与图片边缘相连的背景色，可调容差
+- **即时预览**：调整处理参数时实时预览结果
+- **转换后自动滚动**：转换完成自动滚动到页面底部下载文件
 
 ## 一键部署（公网访问）
 
@@ -91,4 +101,20 @@ python -m imgconvert batch *.png -f .jpg -o ./converted/
 
 ```bash
 python -m imgconvert convert input.png output.jpg -q 85
+```
+
+**图片处理参数：**
+
+```bash
+# 裁剪区域（左,上,右,下）
+python -m imgconvert convert input.png output.png --crop 10,10,200,200
+
+# 图标圆角（自动去除白边）
+python -m imgconvert convert input.png output.ico --radius 60
+
+# 背景镂空，可调容差
+python -m imgconvert convert input.png output.png --cutout --cutout-tolerance 30
+
+# 组合使用
+python -m imgconvert convert input.png output.ico --crop 10,10,500,500 --radius 60 --cutout
 ```

@@ -10,7 +10,7 @@ from pathlib import Path
 
 from flask import Flask, jsonify, render_template, request, send_file
 
-from imgconvert.converter import SUPPORTED_EXT, _resolve_format, convert
+from imgconvert.converter import SUPPORTED_EXT, convert
 
 app = Flask(__name__)
 
@@ -29,6 +29,19 @@ MIME_TYPES = {
     ".ico": "image/x-icon",
     ".pdf": "application/pdf",
 }
+
+
+def _parse_crop(raw: str) -> tuple[int, int, int, int] | None:
+    if not raw:
+        return None
+    parts = [p.strip() for p in raw.split(",")]
+    if len(parts) != 4:
+        raise ValueError("裁剪区域必须为 left,top,right,bottom 四个数字")
+    try:
+        left, top, right, bottom = (int(p) for p in parts)
+    except ValueError:
+        raise ValueError("裁剪区域必须为数字")
+    return left, top, right, bottom
 
 
 @app.route("/")
@@ -54,8 +67,13 @@ def do_convert():
     if not out_ext:
         return jsonify({"error": f"不支持的目标格式: {target_fmt}"}), 400
 
-    if src_ext == out_ext or (src_ext == ".jpeg" and out_ext == ".jpg"):
-        return jsonify({"error": "源格式与目标格式相同，无需转换"}), 400
+    try:
+        crop = _parse_crop(request.form.get("crop", ""))
+        corner_radius = int(request.form.get("radius", 0) or 0)
+        cutout = request.form.get("cutout", "0") == "1"
+        cutout_tolerance = int(request.form.get("cutout_tolerance", 30) or 30)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
 
     with tempfile.NamedTemporaryFile(suffix=src_ext, delete=False) as tmp_in:
         file.save(tmp_in.name)
@@ -64,7 +82,15 @@ def do_convert():
     out = src.with_suffix(out_ext)
 
     try:
-        result = convert(src, out, quality)
+        result = convert(
+            src,
+            out,
+            quality,
+            crop=crop,
+            corner_radius=corner_radius,
+            cutout=cutout,
+            cutout_tolerance=cutout_tolerance,
+        )
         with open(result, "rb") as f:
             data = f.read()
         return send_file(
@@ -99,8 +125,10 @@ def _start_ngrok(port: int) -> str | None:
         return str(tunnel.public_url)
     except Exception as e:
         print(f"ngrok 隧道创建失败: {e}", file=sys.stderr)
-        print("请确认: 1) ngrok 已安装  2) 已配置 auth token (ngrok config add-authtoken <token>)",
-              file=sys.stderr)
+        print(
+            "请确认: 1) ngrok 已安装  2) 已配置 auth token (ngrok config add-authtoken <token>)",
+            file=sys.stderr,
+        )
         return None
 
 
@@ -111,8 +139,6 @@ def run_server(
     ngrok: bool = False,
 ) -> None:
     """Start the Flask development server, optionally with ngrok public tunnel."""
-    public_url: str | None = None
-
     if ngrok:
         print("正在创建 ngrok 公网隧道...")
         public_url = _start_ngrok(port)

@@ -6,7 +6,12 @@ import argparse
 import sys
 from pathlib import Path
 
-from imgconvert.converter import SUPPORTED_EXT, _output_ext, batch_convert, convert
+from imgconvert.converter import (
+    SUPPORTED_EXT,
+    _output_ext,
+    batch_convert,
+    convert,
+)
 
 
 def _parse_ext(raw: str) -> str:
@@ -20,6 +25,46 @@ def _parse_ext(raw: str) -> str:
             f"Unsupported format: {raw}. Choices: {choices}"
         )
     return ext
+
+
+def _parse_crop(raw: str) -> tuple[int, int, int, int]:
+    parts = [p.strip() for p in raw.split(",")]
+    if len(parts) != 4:
+        raise argparse.ArgumentTypeError(
+            "--crop must be four numbers: left,top,right,bottom"
+        )
+    try:
+        return tuple(int(p) for p in parts)  # type: ignore[return-value]
+    except ValueError:
+        raise argparse.ArgumentTypeError(
+            "--crop values must be integers: left,top,right,bottom"
+        )
+
+
+def _add_processing_args(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--crop",
+        type=_parse_crop,
+        metavar="L,T,R,B",
+        help="Crop box in pixels, e.g. --crop 10,10,200,200",
+    )
+    parser.add_argument(
+        "--radius",
+        type=int,
+        default=0,
+        help="Rounded corner radius in pixels (0 disables)",
+    )
+    parser.add_argument(
+        "--cutout",
+        action="store_true",
+        help="Remove the background connected to image edges",
+    )
+    parser.add_argument(
+        "--cutout-tolerance",
+        type=int,
+        default=30,
+        help="Background removal tolerance (default: 30)",
+    )
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -44,6 +89,7 @@ def main(argv: list[str] | None = None) -> None:
         default=95,
         help="JPEG quality (1-100, default: 95)",
     )
+    _add_processing_args(single)
 
     # Batch conversion
     batch = sub.add_parser("batch", help="Batch convert multiple files")
@@ -66,6 +112,7 @@ def main(argv: list[str] | None = None) -> None:
         default=95,
         help="JPEG quality (1-100, default: 95)",
     )
+    _add_processing_args(batch)
 
     # Web server
     serve = sub.add_parser("serve", help="Start the web UI server")
@@ -111,12 +158,29 @@ def _handle_single(args: argparse.Namespace) -> None:
         print("Error: must specify either target path or --format", file=sys.stderr)
         sys.exit(1)
 
-    out = convert(source, target, args.quality)
+    out = convert(
+        source,
+        target,
+        args.quality,
+        crop=args.crop,
+        corner_radius=args.radius,
+        cutout=args.cutout,
+        cutout_tolerance=args.cutout_tolerance,
+    )
     print(f"Converted: {source} -> {out}")
 
 
 def _handle_batch(args: argparse.Namespace) -> None:
-    out = batch_convert(args.sources, args.output, args.format, args.quality)
+    out = batch_convert(
+        args.sources,
+        args.output,
+        args.format,
+        args.quality,
+        crop=args.crop,
+        corner_radius=args.radius,
+        cutout=args.cutout,
+        cutout_tolerance=args.cutout_tolerance,
+    )
     for p in out:
         print(f"Converted: {p}")
     print(f"Done. {len(out)} file(s) converted.")
@@ -136,3 +200,7 @@ def _handle_serve(args: argparse.Namespace) -> None:
         else:
             print(f"Starting web UI at http://{args.host}:{args.port}")
         run_server(host=args.host, port=args.port)
+
+
+if __name__ == "__main__":
+    main()
